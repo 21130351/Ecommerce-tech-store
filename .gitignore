@@ -1,0 +1,17 @@
+# --- CẤU HÌNH TOÀN CỤC ---
+.DS_Store
+.idea/
+.vscode/
+.env
+
+# --- BACKEND (Spring Boot/Maven) ---
+backend/target/
+backend/*.log
+backend/**/*.class
+backend/**/*.jar
+
+# --- FRONTEND (React/Node) ---
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/*.log
