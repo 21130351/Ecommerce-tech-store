@@ -3,9 +3,11 @@ package com.techstore.backend.service.impl;
 import com.techstore.backend.config.JwtProvider;
 import com.techstore.backend.domain.USER_ROLE;
 import com.techstore.backend.modal.Cart;
+import com.techstore.backend.modal.Seller;
 import com.techstore.backend.modal.User;
 import com.techstore.backend.modal.VerificationCode;
 import com.techstore.backend.repository.CartRepository;
+import com.techstore.backend.repository.SellerRepository;
 import com.techstore.backend.repository.UserRepository;
 import com.techstore.backend.repository.VerificationCodeRepository;
 import com.techstore.backend.request.LoginRequest;
@@ -39,18 +41,30 @@ public class AuthServiceImpl implements AuthService {
     private final VerificationCodeRepository verificationCodeRepository;
     private final EmailService emailService;
     private final CustomUserServiceImpl customUserService;
+    private final SellerRepository sellerRepository;
 
     @Override
-    public void sentLoginOtp(String email) throws Exception {
-        String SIGNING_PREFIX = "signin_";
+    public void sentLoginOtp(String email, USER_ROLE role) throws Exception {
+        String SIGNING_PREFIX = "signing_";
 
         if (email.startsWith(SIGNING_PREFIX)) {
             email = email.substring(SIGNING_PREFIX.length());
 
-            User user = userRepository.findByEmail(email);
-            if (user == null) {
-                throw new Exception("user not exist with provided email");
+            if (role.equals(USER_ROLE.ROLE_SELLER)) {
+                Seller seller = sellerRepository.findByEmail(email);
+                if (seller == null) {
+                    throw new Exception("seller not found");
+                }
+
             }
+            else {
+                User user = userRepository.findByEmail(email);
+                if (user == null) {
+                    throw new Exception("user not exist with provided email");
+                }
+            }
+
+
         }
 
         VerificationCode isExist = verificationCodeRepository.findByEmail(email);
@@ -109,7 +123,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AuthResponse signing(LoginRequest req) {
+    public AuthResponse signing(LoginRequest req) throws Exception {
         String username = req.getEmail();
         String otp = req.getOtp();
 
@@ -129,8 +143,13 @@ public class AuthServiceImpl implements AuthService {
         return authResponse;
     }
 
-    private Authentication authenticate(String username, String otp) {
+    private Authentication authenticate(String username, String otp) throws Exception {
         UserDetails userDetails = customUserService.loadUserByUsername(username);
+
+        String SELLER_PREFIX = "seller_";
+        if (username.startsWith(SELLER_PREFIX)) {
+           username = username.substring(SELLER_PREFIX.length());
+        }
 
         if (userDetails==null) {
             throw new BadCredentialsException("invalid username");
@@ -139,7 +158,7 @@ public class AuthServiceImpl implements AuthService {
         VerificationCode verificationCode = verificationCodeRepository.findByEmail(username);
 
         if (verificationCode == null || !verificationCode.getOtp().equals(otp)) {
-            throw new BadCredentialsException("wrong otp");
+            throw new Exception("wrong otp");
         }
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
