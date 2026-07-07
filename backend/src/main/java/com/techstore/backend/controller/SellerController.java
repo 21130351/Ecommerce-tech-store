@@ -2,6 +2,7 @@ package com.techstore.backend.controller;
 
 import com.techstore.backend.config.JwtProvider;
 import com.techstore.backend.domain.AccountStatus;
+import com.techstore.backend.exceptions.SellerException;
 import com.techstore.backend.modal.Seller;
 import com.techstore.backend.modal.SellerReport;
 import com.techstore.backend.modal.VerificationCode;
@@ -82,7 +83,7 @@ public class SellerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Seller>  getSellerById(@PathVariable Long id) throws Exception{
+    public ResponseEntity<Seller>  getSellerById(@PathVariable Long id) throws SellerException {
             Seller seller = sellerService.getSellerById(id);
             return new ResponseEntity<>(seller, HttpStatus.OK);
     }
