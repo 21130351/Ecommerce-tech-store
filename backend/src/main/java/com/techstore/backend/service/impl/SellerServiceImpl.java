@@ -3,6 +3,7 @@ package com.techstore.backend.service.impl;
 import com.techstore.backend.config.JwtProvider;
 import com.techstore.backend.domain.AccountStatus;
 import com.techstore.backend.domain.USER_ROLE;
+import com.techstore.backend.exceptions.SellerException;
 import com.techstore.backend.modal.Address;
 import com.techstore.backend.modal.Seller;
 import com.techstore.backend.repository.AddressRepository;
@@ -54,8 +55,8 @@ public class SellerServiceImpl implements SellerService {
     }
 
     @Override
-    public Seller getSellerById(Long id) throws Exception {
-        return sellerRepository.findById(id).orElseThrow(() -> new Exception("seller not found with id " + id));
+    public Seller getSellerById(Long id) throws SellerException {
+        return sellerRepository.findById(id).orElseThrow(() -> new SellerException("seller not found with id " + id));
     }
 
     @Override

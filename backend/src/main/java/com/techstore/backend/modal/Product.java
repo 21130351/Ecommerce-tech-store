@@ -12,6 +12,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode
+//@Table(name = "products")
 public class Product {
 
     @Id
@@ -46,7 +48,7 @@ public class Product {
     private LocalDateTime createdAt;
 
 //    @ElementCollection
-    private String Sizes;
+    private String sizes;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews = new ArrayList<>();
