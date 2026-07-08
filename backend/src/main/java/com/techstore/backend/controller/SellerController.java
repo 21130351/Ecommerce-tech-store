@@ -12,6 +12,7 @@ import com.techstore.backend.response.ApiResponse;
 import com.techstore.backend.response.AuthResponse;
 import com.techstore.backend.service.AuthService;
 import com.techstore.backend.service.EmailService;
+import com.techstore.backend.service.SellerReportService;
 import com.techstore.backend.service.SellerService;
 import com.techstore.backend.utils.OtpUtil;
 import jakarta.mail.MessagingException;
@@ -32,6 +33,7 @@ public class SellerController {
     private final AuthService authService;
     private final EmailService emailService;
     private final JwtProvider jwtProvider;
+    private final SellerReportService  sellerReportService;
 
 
     @PostMapping("/login")
@@ -94,13 +96,12 @@ public class SellerController {
         return new ResponseEntity<>(seller, HttpStatus.OK);
     }
 
-//    @GetMapping("/report")
-//    public ResponseEntity<SellerReport> getSellerReport(@RequestHeader("Authorization") String jwt) throws Exception{
-//        String email = jwtProvider.getEmailFromJwtToken(jwt);
-//        Seller seller = sellerService.getSellerByEmail(email);
-//        SellerReport report = sellerReportService.getSellerReport(seller);
-//        return new ResponseEntity<>(report, HttpStatus.OK);
-//    }
+    @GetMapping("/report")
+    public ResponseEntity<SellerReport> getSellerReport(@RequestHeader("Authorization") String jwt) throws Exception {
+        Seller seller = sellerService.getSellerProfile(jwt);
+        SellerReport report = sellerReportService.getSellerReport(seller);
+        return new ResponseEntity<>(report, HttpStatus.OK);
+    }
 
     @GetMapping
     public ResponseEntity<List<Seller>> getAllSellers(@RequestParam(required = false) AccountStatus status) {
