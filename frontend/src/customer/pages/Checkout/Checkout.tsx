@@ -15,7 +15,7 @@ const style = {
   p: 4,
 };
 
-const paymentGatewayList=[
+const paymentGatewayList = [
   {
     value: "VNPAY",
     image: "https://stcd02265632633.cloud.edgevnpay.vn/website-vnpay-public/3840/2025/5/0btdg6co3q5j1747996005470.jpg",
@@ -35,97 +35,97 @@ const Checkout = () => {
   const handleClose = () => setOpen(false);
   const [paymentGateway, setPaymentGateway] = React.useState("VNPAY");
 
-  const handlePaymentChange = (event:any) => {
+  const handlePaymentChange = (event: any) => {
     setPaymentGateway(event.target.value);
   }
   return (
     <>
-    <div className='pt-10 px-5 sm:px-10 md:px-44 lg:px-60 min-h-screen'>
-      
-      <div className='space-y-5 lg:space-y-0 lg:grid grid-cols-3 lg:gap-9'>
+      <div className='pt-10 px-5 sm:px-10 md:px-44 lg:px-60 min-h-screen'>
 
-        <div className='col-span-2 space-y-5'>
+        <div className='space-y-5 lg:space-y-0 lg:grid grid-cols-3 lg:gap-9'>
 
-          <div className='flex justify-between items-center'>
+          <div className='col-span-2 space-y-5'>
 
-            <h1 className='font-semibold'>Select Address</h1>
-            <Button onClick={handleOpen}>
-              Add new Address
-            </Button>
+            <div className='flex justify-between items-center'>
 
-          </div>
-          <div className='text-xs font-medium space-y-5'>
-            <p>Save Address</p>
-            <div className='space-y-3'>
-             {[1,1,1].map((item) => <AddressCard/>)}
+              <h1 className='font-semibold'>Select Address</h1>
+              <Button onClick={handleOpen}>
+                Add new Address
+              </Button>
+
+            </div>
+            <div className='text-xs font-medium space-y-5'>
+              <p>Save Address</p>
+              <div className='space-y-3'>
+                {[1, 1, 1].map((item) => <AddressCard />)}
+              </div>
+
+            </div>
+
+            <div className='py-4 px-5 rounded-md border'>
+              <Button onClick={handleOpen}>
+                Add new Address
+              </Button>
             </div>
 
           </div>
-
-          <div className='py-4 px-5 rounded-md border'>
-            <Button onClick={handleOpen}>
-              Add new Address
-            </Button>
-          </div>
-
-        </div>
-
-        <div>
 
           <div>
-            <div className='space-y-3 border p-5 rounded-md'>
-              <h1 className='text-primary-color font-medium pb-2 text-center'>Choose Payment Gateway</h1>
-              <RadioGroup 
-              row 
-              aria-labelledby="demo-row-radio-buttons-group-label" 
-              name="row-radio-buttons-group"
-              className='flex justify-between pr-0'
-              onChange={handlePaymentChange}
-              value={paymentGateway}
-              >
-              {paymentGatewayList.map((item) =>
-              <FormControlLabel
-                  className='border w-[45%] pr-2 rounded-md flex justify-center'
-                  value={item.value}
-                  control={<Radio/>}
-                  label={
-                    <img 
-                    className={`${item.value=="vnpay"?"w-14":""} object-cover`}
-                    src={item.image}
-                    alt={item.label} />
-                  }
-              />)}
-              
-    
-             </RadioGroup>
+
+            <div>
+              <div className='space-y-3 border p-5 rounded-md'>
+                <h1 className='text-primary-color font-medium pb-2 text-center'>Choose Payment Gateway</h1>
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  name="row-radio-buttons-group"
+                  className='flex justify-between pr-0'
+                  onChange={handlePaymentChange}
+                  value={paymentGateway}
+                >
+                  {paymentGatewayList.map((item) =>
+                    <FormControlLabel
+                      className='border w-[45%] pr-2 rounded-md flex justify-center'
+                      value={item.value}
+                      control={<Radio />}
+                      label={
+                        <img
+                          className={`${item.value == "vnpay" ? "w-14" : ""} object-cover`}
+                          src={item.image}
+                          alt={item.label} />
+                      }
+                    />)}
+
+
+                </RadioGroup>
+              </div>
+            </div>
+            <div className='border rounded-md'>
+
+              <PricingCard />
+              <div>
+                <Button className='p-5'
+                  fullWidth
+                  variant='contained'
+                  sx={{ py: "11px" }}> Checkout </Button>
+              </div>
             </div>
           </div>
-           <div className='border rounded-md'>
-            
-                <PricingCard/>
-                <div>
-                    <Button className='p-5'
-                    fullWidth
-                    variant='contained' 
-                    sx={{py:"11px"}}> Checkout </Button>
-                </div>
-            </div>
+
         </div>
 
       </div>
-
-    </div>
-    <Modal
+      <Modal
         open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-     >
+      >
         <Box sx={style}>
-         <AddressForm/>
+          <AddressForm paymentGateway={paymentGateway}/>
         </Box>
-        </Modal>
-       </>
+      </Modal>
+    </>
   )
 }
 

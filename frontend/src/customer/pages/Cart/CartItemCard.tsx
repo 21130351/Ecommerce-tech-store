@@ -2,11 +2,19 @@ import { Close, Remove } from '@mui/icons-material'
 import { Button, Divider, IconButton } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add';
 import React from 'react'
+import { CartItem } from '../../../types/CartTypes';
+import { useAppDispatch } from '../../../State/Store';
+import { updateCartItem } from '../../../State/customer/CartSlice';
 
-const CartItem = () => {
+const CartItemCard = ({item}:{item:CartItem}) => {
+    const dispatch=useAppDispatch()
 
-    const handleUpdateQuantity=() => {
+    const handleUpdateQuantity=(value:number)=>() => {
         //update cart item quantity
+        dispatch(updateCartItem({jwt:localStorage.getItem("jwt"),
+            cartItemId:item.id,
+            cartItem:{quantity:item.quantity+value}
+        }))
     }
   return (
     <div className='border rounded-md relative'>
@@ -16,17 +24,17 @@ const CartItem = () => {
             <div>
                 <img 
                 className='w-[90px] rounded-md'
-                src="https://cdn.hstatic.net/products/1000296652/lt221-15_00e4d065e5e249cba56294e6ca6e6ffb_1024x1024.png" 
+                src={item.product.images[0]} 
                 alt="" />
             </div>
 
             <div className='space-y-2'>
 
-                <h1 className='font-semibold text-lg'>Laptop HP</h1>
-                <p className='text-gray-600 font-medium text-sm'>Laptop Dell G16 7620</p>
+                <h1 className='font-semibold text-lg'>{item.product.seller?.businessDetails.businessName}</h1>
+                <p className='text-gray-600 font-medium text-sm'>{item.product.title}</p>
                    <p className='text-gray-400 text-xs'> <strong> Sold by: </strong>Laptop Gaming Intel Core i7-12700H RTX 3050 Ti</p>
                    <p className='text-sm'>7 days replacement available</p>
-                   <p className='text-sm text-gray-500'> <strong> quantity : </strong> 5 </p>
+                   <p className='text-sm text-gray-500'> <strong> quantity : </strong>{item.quantity} </p>
 
             </div>
 
@@ -40,13 +48,13 @@ const CartItem = () => {
              <div className='px-5 py-2 flex justify-between items-center'>
                 
                 <div className="flex items-center gap-2 w-[140px] justify-between">
-                     <Button onClick={handleUpdateQuantity} disabled={true}>
+                     <Button onClick={handleUpdateQuantity(-1)} disabled={true}>
                             <Remove/>
                         </Button>
                         <span>
-                            {5}
+                            {item.quantity}
                         </span>
-                        <Button  onClick={handleUpdateQuantity}>
+                        <Button  onClick={handleUpdateQuantity(1)}>
                             <AddIcon/>
                         </Button>
                 </div>
@@ -54,7 +62,7 @@ const CartItem = () => {
             </div>
 
             <div className='pr-5'>
-                <p className='text-gray-700 font-medium'>9.000.000₫</p>
+                <p className='text-gray-700 font-medium'>{item.sellingPrice}₫</p>
             </div>
            </div>
 
@@ -71,4 +79,4 @@ const CartItem = () => {
   )
 }
 
-export default CartItem
+export default CartItemCard

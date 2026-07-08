@@ -1,25 +1,34 @@
 import { Box, Button, Divider } from '@mui/material'
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import OrderStepper from './OrderStepper';
 import Payments from '@mui/icons-material/Payments';
+import store, { useAppDispatch, useAppSelector } from '../../../State/Store';
+import { fetchOrderById, fetchOrderItemById } from '../../../State/customer/OrderSlice';
 
 
 const OrderDetails = () => {
     const navigate=useNavigate()
+    const dispatch=useAppDispatch();
+    const {orderId, orderItemId}=useParams();
+    const {order}=useAppSelector(store=>store)
+
+    useEffect(() => {
+        dispatch(fetchOrderById({orderId: Number(orderId), jwt:localStorage.getItem("jwt") || ""}))
+        dispatch(fetchOrderItemById({orderItemId: Number(orderItemId), jwt: localStorage.getItem("jwt") || ""}))
+    },[])
   return (
     <Box className='space-y-5'>
 
         <section className='flex flex-col gap-5 justify-center items-center'>
             <img 
             className='w-[100px]'
-            src="https://cdn.hstatic.net/products/1000296652/lt221-17_7f2ab4c864174d799ba63c02c53ae1e6_1024x1024.png" 
+            src={order.orderItem?.product.images[0]}
             alt="" />
             <div className='text-sm space-y-1 text-center'>
-                <h1 className='font-bold'>{"Laptop"}
+                <h1 className='font-bold'>{order.orderItem?.product.seller?.businessDetails.businessName}
                 </h1>
-                <p>Laptop Gaming Intel Core i7-12700H RTX 3050 Ti | Laptop Dell G16 7620 – 
-                    Hiệu năng gaming mạnh mẽ, thiết kế đậm chất Alienware</p>
+                <p>{order.orderItem?.product.title}</p>
                 <p><strong>NPP :</strong>Like New</p>
             </div>
             <div>
@@ -35,13 +44,17 @@ const OrderDetails = () => {
             <h1 className='font-bold pb-3'> Delivery Address</h1>
             <div className='text-sm space-y-2'>
                 <div className='flex gap-5 font-medium'>
-                    <p> {"John"}</p>
+                    <p> {order.currentOrder?.shippingAddress.name}</p>
                     <Divider flexItem orientation='vertical' />
-                    <p>{123456789}</p>
+                    <p>{order.currentOrder?.shippingAddress.mobile}</p>
                 </div>
 
                 <p>
-                    Nong Lam University, Ho Chi Minh City, Thu Duc District
+                    {order.currentOrder?.shippingAddress.address}, {" "}
+                    {order.currentOrder?.shippingAddress.state}, {" "}
+                    {order.currentOrder?.shippingAddress.city}, {" - "}
+                    {order.currentOrder?.shippingAddress.pinCode}
+                   
                 </p>
 
             </div>
@@ -56,7 +69,7 @@ const OrderDetails = () => {
                     on this item</p>
                 </div>
 
-                <p className='font-medium'>đ {799}.000</p>
+                <p className='font-medium'>đ {order.orderItem?.sellingPrice}.000</p>
             </div>
 
             <div className='px-5'>
@@ -70,7 +83,7 @@ const OrderDetails = () => {
 
             <Divider/>
             <div className='px-5 pb-5'>
-                <p className='text-xs'><strong>Sold by : </strong>{"Laptop HP"}</p>
+                <p className='text-xs'><strong>Sold by : </strong>{order.orderItem?.product.seller?.businessDetails.businessName}</p>
             </div>
 
             <div className='p-10'>

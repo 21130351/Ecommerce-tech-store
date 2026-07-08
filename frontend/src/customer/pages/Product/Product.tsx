@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import FilterSection, { FilterState } from './FilterSection'
 import ProductCard from './ProductCard'
 import {
@@ -7,6 +7,9 @@ import {
 } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import { FilterAlt } from '@mui/icons-material'
+import store, { useAppDispatch, useAppSelector } from '../../../State/Store'
+import { fetchAllProducts } from '../../../State/customer/ProductSlice'
+import { useParams, useSearchParams } from 'react-router-dom'
 
 // Default / empty filter state 
 const EMPTY_FILTERS: FilterState = {
@@ -23,14 +26,37 @@ const Product = () => {
   const [filters,       setFilters]       = useState<FilterState>(EMPTY_FILTERS)
   const [drawerOpen,    setDrawerOpen]    = useState(false)   // mobile filter drawer
   const [page, setPage] =useState(1);
+  const dispatch=useAppDispatch()
+  const [searchParam, setSearchParams] = useSearchParams();
+  const {category} = useParams();
+  const {product}=useAppSelector((store=> store))
 
   // Handlers 
   const handleSortChange = (event: any) => setSort(event.target.value)
 
   const handlePageChange =(value:number) => {
     setPage(value)
-
   }
+
+  useEffect(()=>{
+    // Lấy thông tin khoảng giá từ URL (Ví dụ: "100-500" sẽ tách thành minPrice = "100", maxPrice = "500")
+    // Nếu trên URL không có trường "price", nó sẽ trả về mảng rỗng []
+    const [minPrice, maxPrice] = searchParam.get("price")?.split("-") || [];
+    const brand=searchParam.get("brand")
+    const minDiscount=searchParam.get("discount")?Number(searchParam.get("discount"))
+    :undefined;
+    const pageNumber=page-1;
+    //  Đóng gói tất cả các tiêu chí lựa chọn trên thành một bộ lọc duy nhất (Object)
+    const newFilter={
+      brand:brand || "",
+      minPrice : minPrice?Number(minPrice):undefined,
+      maxPrice : maxPrice?Number(maxPrice):undefined,
+      minDiscount,
+      pageNumber
+    };
+   // Gửi bộ lọc này lên Server thông qua Redux Action để lấy danh sách sản phẩm mới về
+    dispatch(fetchAllProducts({newFilter}))
+  },[category, searchParam]) // CODE SẼ TỰ ĐỘNG CHẠY LẠI: Mỗi khi đổi danh mục (category) hoặc thay đổi bộ lọc trên URL (searchParam)
 
   const handleClearAll = () => setFilters(EMPTY_FILTERS)
 
@@ -87,8 +113,8 @@ const Product = () => {
       
           {/* Product grid */}
           <section className='products_section grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-5 px-5 justify-center'>
-            {[1, 1, 1, 1, 1, 1, 1, 1, 1].map((_, i) => (
-              <ProductCard key={i} />
+            {product.products.map((item, i) => (
+              <ProductCard key={i} item={item} />
             ))}
           </section>
           <div className='flex justify-center py-10'>

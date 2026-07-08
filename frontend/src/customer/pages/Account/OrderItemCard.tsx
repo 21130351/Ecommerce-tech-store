@@ -2,10 +2,15 @@ import { ElectricBolt } from '@mui/icons-material'
 import { Avatar } from '@mui/material'
 import { red } from '@mui/material/colors'
 import React from 'react'
+import { Order, OrderItem } from '../../../types/OrderTypes'
+import { useNavigate } from 'react-router-dom'
 
-const OrderItem = () => {
+const OrderItemCard = ({item,order}:{item:OrderItem, order:Order}) => {
+  const navigate=useNavigate()
   return (
-    <div className='text-sm bg-white p-5 space-y-4 border rounded-md cursor-pointer'>
+    //xu ly khi click vao anh san pham trong orders cua account
+    <div onClick={()=>navigate(`/account/order/${order.id}/${item.id}`)} 
+    className='text-sm bg-white p-5 space-y-4 border rounded-md cursor-pointer'>
 
       <div className='flex items-center gap-5'>
 
@@ -17,7 +22,7 @@ const OrderItem = () => {
 
         <div>
           <h1 className='font-bold text-primary-color'>PENDING</h1>
-          <p>Arriving By Fri, Oct 4</p>
+          <p>Arriving By {order.deliverDate}</p>
         </div>
 
       </div>
@@ -26,13 +31,12 @@ const OrderItem = () => {
         <div>
           <img 
           className='w-[70px]'
-          src="https://cdn.hstatic.net/products/1000296652/lt221-17_7f2ab4c864174d799ba63c02c53ae1e6_1024x1024.png" 
+          src={item.product.images[0]} 
           alt="" />
         </div>
         <div className='w-full space-y-2'>
-          <h1 className='font-bold'>Laptop</h1>
-          <p>	Laptop Gaming Intel Core i7-12700H RTX 3050 Ti | 
-            Laptop Dell G16 7620 – Hiệu năng gaming mạnh mẽ, thiết kế đậm chất Alienware</p>
+          <h1 className='font-bold'>{item.product.seller?.businessDetails.businessName}</h1>
+          <p>{item.product.title}</p>
             <p>
               <strong>NPP : </strong>
               Like New
@@ -45,4 +49,4 @@ const OrderItem = () => {
   )
 }
 
-export default OrderItem
+export default OrderItemCard

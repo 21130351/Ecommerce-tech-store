@@ -57,10 +57,23 @@ const CategorySheet = ({ activeCategory }: Props) => {
   const subItems  = categoryThree[activeCategory] ?? {}
 
   const handleItemClick = (sectionName: string, item: string) => {
-    navigate(
-      `/products/${activeCategory}?type=${encodeURIComponent(sectionName)}&value=${encodeURIComponent(item)}`
-    )
+  const params = new URLSearchParams()
+
+  // Dựa vào tên section để biết nên set param nào
+  if (sectionName === "By Brand") {
+    params.set("brand", item)                    // ?brand=Dell
+  } else if (sectionName === "By Price") {
+    params.set("price", item)                    // ?price=Under $300
+  } else if (sectionName === "Gaming Laptops") {
+    params.set("brand", item)                    // ?brand=Asus ROG
+  } else {
+    // Các section khác (Resolution, Size...) dùng type chung
+    params.set("type", sectionName)
+    params.set("value", item)
   }
+
+  navigate(`/products/${activeCategory}?${params.toString()}`)
+}
 
   return (
     <Box

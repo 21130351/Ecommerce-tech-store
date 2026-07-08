@@ -1,6 +1,8 @@
 import { Divider, ListItemIcon, ListItemText } from '@mui/material'
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useAppDispatch } from '../State/Store'
+import { logout } from '../State/AuthSlice'
 
 interface menuItem{
 
@@ -20,6 +22,11 @@ const DrawerList = ({menu, menu2, toggleDrawer}:DrawerListProps) => {
     // Lấy đường dẫn (URL) hiện tại để xác định menu nào đang được active
     const location=useLocation();
     const navigate=useNavigate();
+    const dispatch=useAppDispatch();
+
+    const handleLogout=() => [
+        dispatch(logout(navigate))
+    ]
   return (
     <div className='h-full'>
           {/* Container của Drawer */}
@@ -32,7 +39,10 @@ const DrawerList = ({menu, menu2, toggleDrawer}:DrawerListProps) => {
                         menu.map((item, index:number)=> 
                             // Điều hướng đến trang tương ứng với menu được chọn
                              <div 
-                            onClick={()=>navigate(item.path)}
+                            onClick={()=>{
+                                navigate(item.path)
+                                if(item.path=="/") handleLogout()
+                            }}
                              className='pr-9 cursor-pointer' key={index}>
                                 {/* Highlight menu đang active */}
                                 <p className={`${item.path===location.pathname?"bg-primary-color text-white":"text-primary-color"}

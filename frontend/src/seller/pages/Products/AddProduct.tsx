@@ -38,6 +38,8 @@ import { monitorLevelThree } from "../../../data/category/levelThree/monitorLeve
 import { routersLevelThree } from "../../../data/category/levelThree/routersLevelThree";
 import { softwareLevelThree } from "../../../data/category/levelThree/softwareLevelThree";
 import { title } from "process";
+import { useAppDispatch } from "../../../State/Store";
+import { createProduct } from "../../../State/seller/sellerProductSlice";
 
 // Kieu du lieu cho 1 item trong levelTwo, vi du: { id: 1, name: "By Brand" }
 interface LevelTwoItem {
@@ -88,6 +90,8 @@ const productColors = [
 const AddProduct = () => {
   const [uploadImage, setUploadingImage] = useState(false);
   const [snackbarOpen, setOpenSnackbar] = useState(false);
+  const dispatch=useAppDispatch();
+
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -107,6 +111,7 @@ const AddProduct = () => {
     // validationSchema: validationSchema,
     onSubmit: (values) => {
       console.log(values);
+      dispatch(createProduct({request:values, jwt:localStorage.getItem("jwt")}))
     },
   });
   const handleImageChange = async (event: any) => {

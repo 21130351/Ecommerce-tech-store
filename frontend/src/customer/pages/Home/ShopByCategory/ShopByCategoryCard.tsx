@@ -1,8 +1,9 @@
 import React from 'react'
 import "./ShopByCategory.css"
+import { HomeCategory } from '../../../../types/HomeCategoryTypes'
 
 /**card hinh tron  */
-const ShopByCategoryCard = () => {
+const ShopByCategoryCard = ({item}:{item:HomeCategory}) => {
   return (
     <div className='flex gap-3 flex-col justify-center items-center group 
     cursor-pointer'>
@@ -12,10 +13,10 @@ const ShopByCategoryCard = () => {
             <img
              className='rounded-full group-hover:scale-95 transition-transform
              transform-duration-700 object-cover object-top h-full w-full'
-            src="https://images.pexels.com/photos/20828487/pexels-photo-20828487.jpeg" 
+            src={item.image}
             alt="" />
         </div>
-        <h1>MacBook</h1>
+        <h1>{item.name}</h1>
 
     </div>
   )

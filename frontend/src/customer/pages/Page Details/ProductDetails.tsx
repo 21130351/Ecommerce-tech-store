@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import StarIcon from '@mui/icons-material/Star';
 import { red } from '@mui/material/colors';
 import { Button, Divider } from '@mui/material';
@@ -6,26 +6,42 @@ import { AddShoppingCart, FavoriteBorder, LocalShipping, Remove, Shield, Wallet,
 import AddIcon from '@mui/icons-material/Add';
 import SimilarProduct  from './SimilarProduct';
 import ReviewCard from '../Review/ReviewCard';
+import { useAppDispatch, useAppSelector } from '../../../State/Store';
+import { useParams } from 'react-router-dom';
+import { fetchProductById } from '../../../State/customer/ProductSlice';
 
 const ProductDetails = () => {
     const [quantity, setQuantity] = React.useState(1);
+    const dispatch=useAppDispatch()
+    const {productId}=useParams()
+    const {product}=useAppSelector(store=>store)
+    const [activeImage, setActiveImage]=useState(0);
+
+    useEffect(() =>{
+        dispatch(fetchProductById(Number(productId)))
+    },[productId])
+
+    const handleActiveImage=(value:number)=>()=>{
+        setActiveImage(value)
+    }
   return (
     <div className='px-5 lg:px-20 pt-10'>
 
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-10'>
             <section className='flex flex-col lg:flex-row gap-5'>
                 <div className='w-full lg:w-[15%] flex flex-wrap lg:flex-col gap-3'>
-
-                    {[1,1,1,1].map((item) => <img
+                    /**khi click vao image trong product-details se thay doi anh hien thi */
+                    {product.product?.images.map((item,index) => <img 
+                    onClick={handleActiveImage(index)}
                     className='lg:w-full w-[50px] cursor-pointer rounded-md' 
-                    src='https://cdn.hstatic.net/products/1000296652/lt271-8_737c08ca9ba142319a8f650194c3f027_1024x1024.png'
+                    src={item}
                     alt=''/>)}
 
                 </div>
                 <div className='w-full lg:w-[85%]'>
                     <img 
                     className='w-full rounded-md'
-                    src="https://cdn.hstatic.net/products/1000296652/lt271-6_0707c3fd350e4d118ecf366be8787012_1024x1024.png" 
+                    src={product.product?.images[activeImage]} 
                     alt="" />
 
                 </div>
@@ -34,9 +50,9 @@ const ProductDetails = () => {
 
             <section>
                 <h1 className='font-bold text-lg text-primary-color'>
-                    Laptop
+                    {product.product?.seller?.businessDetails.businessName}
                 </h1>
-                <p className='text-gray-500 font-semibold'>Laptop HP Victus 15-fa2732TX I5-13420H/16GB/SSD 512GB/RTX 4050 6G/WL/BT/4C/LKB/15.6" FHD 144Hz/W11SL/Đen B85LPPA</p>
+                <p className='text-gray-500 font-semibold'>{product.product?.title}</p>
                 <div className='flex justify-between items-center py-2 border w-[180px] px-3 mt-5'>
                     <div className='flex gap-1 items-center'>
                         <span>4</span>
@@ -51,13 +67,13 @@ const ProductDetails = () => {
                 <div>
                     <div className='price flex items-center gap-3 mt-5 text-2xl'>
                      <span className='font-sans text-gray-800'>
-                      8.460.000₫
+                      {product.product?.sellingPrice}₫
                      </span>
                       <span className='line-through text-gray-400'>
-                      9.000.000.000₫
+                      {product.product?.orgPrice}₫
                        </span>
                         <span className='text-primary-color font-semibold'>
-                         6%
+                         {product.product?.discountPercent}%
                         </span>
 
                 </div>
@@ -131,8 +147,7 @@ const ProductDetails = () => {
                 </div>
 
                 <div className='mt-5'>
-                    <p>Laptop HP Victus 15-fa2732TX (B85LPPA) là lựa chọn lý tưởng cho game thủ và người dùng sáng tạo nhờ sự kết hợp giữa thiết kế gaming hiện đại và cấu hình mạnh mẽ. Với hiệu năng vượt trội từ CPU Intel Gen 13, GPU RTX 40 series cùng màn hình tần số quét cao, Bộ xử lý này phù hợp với các tác vụ đa nhiệm như làm việc văn phòng, lập trình, chỉnh sửa hình ảnh hay các công việc liên quan đến dữ liệu
-                    </p>
+                    <p>{product.product?.description}</p>
                 </div>
 
                 <div className='mt-12 space-y-5'>

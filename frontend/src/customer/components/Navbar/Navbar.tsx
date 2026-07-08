@@ -6,6 +6,7 @@ import Avatar            from '@mui/material/Avatar'
 import { AddShoppingCart, FavoriteBorder, Storefront } from '@mui/icons-material'
 import CategorySheet from './CategorySheet'
 import { useNavigate } from 'react-router-dom'
+import { useAppSelector } from '../../../State/Store'
 
 // The 7 navbar categories
 const NAV_CATEGORIES = [
@@ -25,6 +26,7 @@ const Navbar = () => {
   // Which category is currently hovered (null = none → dropdown hidden)
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const navigate=useNavigate()
+  const {auth}=useAppSelector(store=>store);
 
   return (
     // Wrap in a container that tracks mouse leave for the whole navbar+dropdown
@@ -75,20 +77,20 @@ const Navbar = () => {
             <SearchIcon />
           </IconButton>
 
-          {true ? (
+          {auth.user ? (
             <Button onClick={()=>navigate("account/orders")}
             className='flex items-center gap-2'>
               <Avatar
                 sx={{ width: 29, height: 29 }}
                 src='https://api.dicebear.com/7.x/adventurer/svg?seed=Felix'
               />
-              <h1 className='font-semibold hidden lg:block'>Name</h1>
+              <h1 className='font-semibold hidden lg:block'>{auth.user?.fullName}</h1>
             </Button>
           ) : (
-            <Button variant='contained'>Login</Button>
+            <Button onClick={()=>navigate("/login")} variant='contained'>Login</Button>
           )}
 
-          <IconButton>
+          <IconButton onClick={() => navigate("/wishlist")}>
             <FavoriteBorder className='text-red-500' sx={{ fontSize: 29 }} />
           </IconButton>
           <IconButton onClick={()=>navigate("/cart")}>
