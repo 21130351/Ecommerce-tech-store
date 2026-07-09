@@ -18,6 +18,7 @@ import com.techstore.backend.repository.PaymentOrderRepository;
 import com.techstore.backend.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -26,12 +27,18 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
-    private PaymentOrderRepository paymentOrderRepository;
-    private OrderRepository orderRepository;
+    private final PaymentOrderRepository paymentOrderRepository;
+    private final OrderRepository orderRepository;
 
-    private String apiKey="apikey";
-    private String apiSecret="apisecret";
-    private String stripeSecretKey="stripesecretkey";
+    @Value("${stripe.api.key}")
+    private String stripeSecretKey;
+
+    @Value("${razorpay.api.key}")
+    private String apiKey;
+
+    @Value("${razorpay.api.secret}")
+    private String apiSecret;
+
 
     @Override
     public PaymentOrder createOrder(User user, Set<Order> orders) {
